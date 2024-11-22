@@ -1,5 +1,6 @@
 export const API_CONFIG = {
-    BASE_URL: 'http://localhost:3333/api',
+    // BASE_URL: 'http://localhost:3333/api',
+    BASE_URL: 'https://backendveterinary.onrender.com/api',
     ENDPOINTS: {
         ADM_PERSONAL:          '/admin/personal',
         ADM_CLIENTES:          '/admin/clientes',
