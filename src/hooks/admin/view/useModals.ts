@@ -5,11 +5,13 @@ import { Bitacora, Cliente, Mascota, Personal, Reservacion,
 
 
 export const useAdminModals = () => {
-    const [activeForm, setActiveForm] = useState<'personal' | 'cliente' | 'mascota' | null>(null);
+    const [activeForm, setActiveForm] = useState<'personal' | 'cliente' | 'mascota' | 'servicio'| null>(null);
     
     const setShowPersonalForm = (show: boolean) => setActiveForm(show ? 'personal' : null);
     const setShowClienteForm = (show: boolean) => setActiveForm(show ? 'cliente' : null);
     const setShowMascotaForm = (show: boolean) => setActiveForm(show ? 'mascota' : null);
+    const setShowServiceForm = (show: boolean) => setActiveForm(show ? 'servicio' : null);
+
 
     const [showPersonalModal, setShowPersonalModal] = useState(false);
     const [showClienteModal, setShowClienteModal] = useState(false);
@@ -36,7 +38,8 @@ export const useAdminModals = () => {
             console.error('Error fetching data:', error);
         }
     };
-
+    console.log(reservacionList)
+    //Ver listas del dashboard
     const handleViewList = async (type: 'personal' | 'clientes' | 'mascotas' | 'bitacora' | 'reservacion' | 'usuarios') => {
         switch (type) {
             case 'personal':
@@ -71,7 +74,8 @@ export const useAdminModals = () => {
         showPersonalForm: activeForm === 'personal',
         showClienteForm: activeForm === 'cliente',
         showMascotaForm: activeForm === 'mascota',
-        setShowPersonalForm, setShowClienteForm, setShowMascotaForm,
+        showServiceForm: activeForm === 'servicio',
+        setShowPersonalForm, setShowClienteForm, setShowMascotaForm,setShowServiceForm,
         personalList, clienteList, mascotaList, bitacoraList, reservacionList,
         showUsuarioModal, setShowUsuarioModal, usuarioList,
         showPersonalModal, setShowPersonalModal,

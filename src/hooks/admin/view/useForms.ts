@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFormHandler } from '@/hooks/index.hooks';
-import type { PersonalForm, ClienteForm, MascotaForm, ApiResponse } from '@/types/index.types';
+import type { PersonalForm, ClienteForm, MascotaForm, ApiResponse, ServicioForm } from '@/types/index.types';
 
 
 export const useAdminForms = () => {
@@ -40,7 +40,8 @@ export const useAdminForms = () => {
             NombreCompleto: '',
             Telefono: '',
             Direccion: '',
-            Email: ''
+            Email: '',
+            NumeroCI: 0
         },
         onSuccess: (response) => {
             setResponseModal({
@@ -70,7 +71,23 @@ export const useAdminForms = () => {
         }
     });
 
-    const handleSubmit = async (formType: 'personal' | 'cliente' | 'mascota') => {
+    const servicioHandler = useFormHandler<ServicioForm>({
+        formType: 'servicio',
+        initialState: {
+            nombre: '',
+            descripcion: '',
+            precio: 0,
+        },
+        onSuccess: (response) => {
+            console.log(response)
+            setResponseModal({
+                isOpen: true,
+                response,
+                title: 'Registro de servicio exitoso'
+            });
+        }
+    });
+    const handleSubmit = async (formType: 'personal' | 'cliente' | 'mascota'| 'servicio') => {
         try {
             switch (formType) {
                 case 'personal':
@@ -82,6 +99,9 @@ export const useAdminForms = () => {
                 case 'mascota':
                     await mascotaHandler.handleSubmit();
                     break;
+                case 'servicio':
+                    await servicioHandler.handleSubmit();
+                break;
             }
         } catch (error) {
             console.log({error});
@@ -100,6 +120,8 @@ export const useAdminForms = () => {
         setClienteForm: clienteHandler.setForm,
         mascotaForm: mascotaHandler.form,
         setMascotaForm: mascotaHandler.setForm,
+        servicioForm: servicioHandler.form,
+        setServicioForm: servicioHandler.setForm,
         responseModal, setResponseModal,
         handleSubmit
     };

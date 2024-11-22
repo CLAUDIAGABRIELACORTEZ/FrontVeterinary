@@ -18,7 +18,7 @@ export const TimeSlotSelector: React.FC<TimeSlotSelectorProps> = ({
         selectedDate,
         onError: (error) => console.error('Error cargando horarios:', error)
     });
-
+    console.log('avality', availability)
     if (loading) {
         return <div>Cargando horarios disponibles...</div>;
     }

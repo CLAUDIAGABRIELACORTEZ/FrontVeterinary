@@ -55,6 +55,7 @@ export interface AdminCardsProps {
     onShowPersonalForm: () => void;
     onShowClienteForm: () => void;
     onShowMascotaForm: () => void;
+    onShowServicioForm: () => void;
 }
 
 export interface AdminHeaderProps {
@@ -83,6 +84,7 @@ export interface RenderModalProps<T extends Record<string, unknown>> {
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
     itemsPerPage?: number;
     onEdit?: (record: T) => void;
+    openAttendModal?: (reservation: T) => void;
 }
 
 export interface AdminCardProps {
@@ -126,6 +128,7 @@ export type ClienteForm = {
     Telefono: string;
     Direccion: string;
     Email: string;
+    NumeroCI: number
 };
 
 export type MascotaForm = {
@@ -137,7 +140,12 @@ export type MascotaForm = {
     RazaID: number;
 };
 
-export type FormTypes = PersonalForm | ClienteForm | MascotaForm;
+export type ServicioForm = {
+    nombre: string;
+    descripcion: string;
+    precio: number
+};
+export type FormTypes = PersonalForm | ClienteForm | MascotaForm | ServicioForm;
 
 export interface CurrentItemType {
     personal?: Personal;
@@ -182,6 +190,7 @@ export interface Reservacion extends Record<string, unknown> {
     UsuarioID: number;
     NombreCliente: string;
     Estado: string;
+    Motivo: string
 }
 
 export interface Usuario extends Record<string, unknown> {

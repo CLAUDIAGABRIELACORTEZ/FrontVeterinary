@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RenderModalProps } from '@/types/index.types';
-
 
 export const renderModal = <T extends Record<string, unknown>>({
     title,
@@ -12,11 +11,14 @@ export const renderModal = <T extends Record<string, unknown>>({
     setCurrentPage,
     itemsPerPage = 6,
     onEdit,
+    openAttendModal, // Nueva prop
 }: RenderModalProps<T>) => {
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
+    
     const renderPagination = (totalItems: number) => {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const maxButtons = 5;
@@ -89,6 +91,9 @@ export const renderModal = <T extends Record<string, unknown>>({
         }
         else if ('ClienteID' in item) {
             baseHeaders.push(...['ClienteID', 'NombreCompleto', 'Telefono', 'Direccion', 'Email']);
+        }else if ('ReservacionID' in item) {
+            baseHeaders.push(...['Estado', 'NombreServicioMedico', 'Fecha_Hora', 'NombreCliente', 'ReservacionID', 'UsuarioID']);
+            baseHeaders.push('Atender'); // Agregar columna para "Atender" solo en Reservaciones
         }
         if (onEdit) {
             baseHeaders.push('Editar');
@@ -102,13 +107,23 @@ export const renderModal = <T extends Record<string, unknown>>({
     const renderMobileCard = (item: T, index: number) => (
         <div key={index} className="bg-white rounded-lg shadow-md p-4 mb-4">
             {headers.map((header) => (
-                header !== 'Editar' && (
+                header !== 'Editar' && header !== 'Atender' && (
                     <div key={header} className="mb-2 text-center">
                         <span className="font-semibold text-gray-700">{header}: </span>
                         <span className="text-gray-600">{item[header]?.toString() || ''}</span>
                     </div>
                 )
             ))}
+            {title === 'Lista de Reservaciones' && (
+                <div className="mt-4 text-center">
+                    <Button
+                        onClick={() => openAttendModal?.(item)}
+                        className="w-full bg-blue-500 hover:bg-blue-600"
+                    >
+                        Atender
+                    </Button>
+                </div>
+            )}
             {onEdit && (
                 <div className="mt-4 text-center">
                     <Button
@@ -145,19 +160,19 @@ export const renderModal = <T extends Record<string, unknown>>({
                             key={index} 
                             className={`${index % 2 === 0 ? 'bg-gray-50' : ''} hover:bg-gray-100 transition-colors`}
                         >
-                            {headers.map((header) => (
-                                header !== 'Editar' ? (
-                                    <td 
-                                        key={header} 
-                                        className="p-2 text-center border-b border-gray-200"
-                                    >
-                                        {item[header]?.toString() || ''}
+                            {headers.map((header) =>
+                                header === 'Atender' && title === 'Lista de Reservaciones' ? ( // Mostrar botón "Atender" solo en Reservaciones
+                                    <td key={header} className="p-2 text-center border-b border-gray-200">
+                                        <Button
+                                            onClick={() => openAttendModal?.(item)}
+                                            className="bg-blue-500 hover:bg-blue-600 mx-auto"
+                                            size="sm"
+                                        >
+                                            Atender
+                                        </Button>
                                     </td>
-                                ) : onEdit && (
-                                    <td 
-                                        key={header} 
-                                        className="p-2 text-center border-b border-gray-200"
-                                    >
+                                ) : header === 'Editar' && onEdit ? (
+                                    <td key={header} className="p-2 text-center border-b border-gray-200">
                                         <Button
                                             onClick={() => onEdit(item)}
                                             className="bg-yellow-500 hover:bg-yellow-600 mx-auto"
@@ -166,8 +181,12 @@ export const renderModal = <T extends Record<string, unknown>>({
                                             <Pencil className="h-4 w-4" />
                                         </Button>
                                     </td>
+                                ) : (
+                                    <td key={header} className="p-2 text-center border-b border-gray-200">
+                                        {item[header]?.toString() || ''}
+                                    </td>
                                 )
-                            ))}
+                            )}
                         </tr>
                     ))}
                 </tbody>

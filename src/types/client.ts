@@ -20,6 +20,8 @@ export interface Reservation {
 export interface ReservationRequest {
     Motivo: string;
     FechaHoraReservada: string;
+    ServicioMedicoID: number
+    MascotaID: number
 }
 
 export interface TimeSlot {

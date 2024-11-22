@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserPlus, Users, PawPrint } from 'lucide-react';
+import { UserPlus, Users, PawPrint, FilePlus } from 'lucide-react';
 import { AdminCardProps, AdminCardsProps } from '@/types/index.types';
 
 
@@ -14,7 +14,8 @@ const AdminCard: React.FC<AdminCardProps> = ({ icon, title, description, onClick
 export const AdminCards: React.FC<AdminCardsProps> = ({
     onShowPersonalForm,
     onShowClienteForm,
-    onShowMascotaForm
+    onShowMascotaForm,
+    onShowServicioForm
 }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -35,6 +36,12 @@ export const AdminCards: React.FC<AdminCardsProps> = ({
                 title="Registrar Mascota"
                 description="Añadir una nueva mascota a un cliente existente"
                 onClick={onShowMascotaForm}
+            />
+            <AdminCard 
+                icon={<FilePlus size={40} />}
+                title="Registrar Servicio"
+                description="Añadir una nuevo servicio"
+                onClick={onShowServicioForm}
             />
         </div>
     );

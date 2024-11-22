@@ -8,6 +8,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 interface LoginResponse {
     access_token: string;
     rol: 'Administrador' | 'Veterinario' | 'Cliente';
+    userId: number
 }
 
 interface LoginErrorResponse {
@@ -46,7 +47,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
             const data: LoginResponse = await response.json();
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('role', data.rol);
-          
+            localStorage.setItem('userId', data.userId.toString());
             switch (data.rol) {
                 case 'Administrador':
                     router.push('/admin/dashboard');

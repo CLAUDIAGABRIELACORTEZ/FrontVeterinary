@@ -5,12 +5,15 @@ export const API_CONFIG = {
         ADM_CLIENTES:          '/admin/clientes',
         ADM_MASCOTAS:          '/admin/mascotas',
         ADM_LOGS:              '/admin/logs',
+        ADM_HIST:               '/admin/historial',
         CLI_MASCOTAS:          '/cliente/mascotas',
         CLI_RESERVA:           '/cliente/reservacion',
         CLI_RESERVACLI:        '/cliente/reservacion/cli',
         CLI_RESERVAGRAL:       '/cliente/reservacion/gral',
         DOC_VACUNAS:           '/vetdoc/vacunas',
-        DOC_REGVAC:            '/vetdoc/regvac'
+        DOC_REGVAC:            '/vetdoc/regvac',
+        ADM_SERVICIO:           '/admin/servicioMedico',
+        CLI_SERVICIO:           '/cliente/serviciosMedicos'
     },
     ITEMS_PER_PAGE: 6
 } as const;

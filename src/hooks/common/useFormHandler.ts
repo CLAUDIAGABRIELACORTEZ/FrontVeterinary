@@ -4,7 +4,7 @@ import { ApiResponse, FormTypes } from '@/types/index.types';
 
 
 interface UseFormHandlerProps<T extends FormTypes> {
-    formType: 'personal' | 'cliente' | 'mascota';
+    formType: 'personal' | 'cliente' | 'mascota' | 'servicio';
     initialState: T;
     onSuccess?: (response: ApiResponse) => void;
 }
@@ -17,15 +17,17 @@ export const useFormHandler = <T extends FormTypes>({
     const [form, setForm] = useState<T>(initialState);
 
     const resetForm = () => setForm(initialState);
-
+    
     const handleSubmit = async () => {
         const endpointMap = {
             personal: API_CONFIG.ENDPOINTS.ADM_PERSONAL,
             cliente: API_CONFIG.ENDPOINTS.ADM_CLIENTES,
-            mascota: API_CONFIG.ENDPOINTS.ADM_MASCOTAS
+            mascota: API_CONFIG.ENDPOINTS.ADM_MASCOTAS,
+            servicio: API_CONFIG.ENDPOINTS.ADM_SERVICIO
         };
 
         try {
+            console.log(form)
             const response: ApiResponse = await ApiService.fetch(endpointMap[formType], {
                 method: 'POST',
                 body: JSON.stringify(form)

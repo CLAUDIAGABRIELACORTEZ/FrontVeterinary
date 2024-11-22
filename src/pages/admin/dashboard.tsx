@@ -1,12 +1,14 @@
 import '@/app/globals.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { logout } from '@/utils/index.utils';
-import { Personal } from '@/types/index.types';
+import { ApiResponse, Personal, Reservacion } from '@/types/index.types';
 import { useRouter } from 'next/router';
 import { AdminActions, AdminCards, AdminHeader, 
     renderForm, renderModal, ResponseModal, UpdateModal } from '@/components/admin/index.admincomp';
 import { useAdminForms, useAdminModals, useAdminUpdates, useAuth } from '@/hooks/index.hooks';
-
+import { AttendModal } from '@/components/admin/shared/Atencion';
+import { ApiService } from '@/services/api';
+import { API_CONFIG } from '@/services/constants';
 
 const AdminPage: React.FC = () => {
     const router = useRouter();
@@ -16,12 +18,13 @@ const AdminPage: React.FC = () => {
         personalForm, setPersonalForm,
         clienteForm, setClienteForm,
         mascotaForm, setMascotaForm,
+        servicioForm, setServicioForm,
         responseModal, setResponseModal, handleSubmit
     } = useAdminForms();
 
     const {
-        showPersonalForm, setShowPersonalForm,
-        showClienteForm, setShowClienteForm,
+        showPersonalForm, setShowPersonalForm, setShowServiceForm,
+        showClienteForm, setShowClienteForm, showServiceForm,
         showMascotaForm, setShowMascotaForm,
         showPersonalModal, setShowPersonalModal,
         showClienteModal, setShowClienteModal,
@@ -33,6 +36,47 @@ const AdminPage: React.FC = () => {
         currentPage, setCurrentPage, itemsPerPage, handleViewList
     } = useAdminModals();
 
+
+     // 1. Agregar estados para el modal de atención
+     const [showAttendModal, setShowAttendModal] = useState(false);
+     const [attendForm, setAttendForm] = useState<Reservacion | null>(null);
+
+     // 2. Función para abrir el modal de atención
+    const openAttendModal = (reservacion: Reservacion) => {
+        console.log('Abriendo modal de atención para:', reservacion);
+        setAttendForm(reservacion);
+        setShowAttendModal(true);
+    };
+
+    // 3. Función para manejar el envío del formulario de atención
+    const handleAttendSubmit = async(formData: any) => {
+        console.log(formData)
+        try {
+            const response: ApiResponse = await ApiService.fetch(API_CONFIG.ENDPOINTS.ADM_HIST, {
+                method: 'POST',
+                body: JSON.stringify(formData),
+            });
+            console.log('Historial médico creado:', response);
+            // Puedes mostrar un mensaje de éxito al usuario aquí
+            setResponseModal({
+                isOpen: true,
+                title: 'Historial médico creado con éxito',
+                response: response,
+            });
+            setShowAttendModal(false);
+            // Actualizar la lista de reservaciones si es necesario
+        } catch (error) {
+            console.error('Error al crear el historial médico:', error);
+            // Manejar el error, mostrar mensaje al usuario, etc.
+            // setResponseModal({
+            //     isOpen: true,
+            //     title: 'Error al crear historial médico',
+            //     response: response,
+            // });
+        }
+        setShowAttendModal(false);
+        // Opcional: actualizar la lista de reservaciones si es necesario
+    };
     const {
         showUpdateModal, setShowUpdateModal,
         updateType, updateForm, setUpdateForm,
@@ -52,7 +96,6 @@ const AdminPage: React.FC = () => {
     const handleLogout = () => {
         logout(router);
     };
-
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
             <AdminHeader onLogout={handleLogout} />
@@ -61,6 +104,7 @@ const AdminPage: React.FC = () => {
                     onShowPersonalForm={() => setShowPersonalForm(true)}
                     onShowClienteForm={() => setShowClienteForm(true)}
                     onShowMascotaForm={() => setShowMascotaForm(true)}
+                    onShowServicioForm={() => setShowServiceForm(true)}
                 />
                 <AdminActions onViewList={handleViewList} />
             </main>
@@ -83,6 +127,13 @@ const AdminPage: React.FC = () => {
                 form: mascotaForm,
                 setForm: setMascotaForm,
                 onClose: () => setShowMascotaForm(false),
+                handleSubmit
+            })}
+            {showServiceForm && renderForm({
+                title: "Registrar Servicio",
+                form: servicioForm,
+                setForm: setServicioForm,
+                onClose: () => setShowServiceForm(false),
                 handleSubmit
             })}
             {showPersonalModal && renderModal<Personal>({
@@ -126,10 +177,11 @@ const AdminPage: React.FC = () => {
                 onClose: () => setShowReservacionModal(false),
                 currentPage,
                 setCurrentPage,
-                itemsPerPage
+                itemsPerPage,
+                openAttendModal
             })}
             {showUsuarioModal && renderModal({
-                title: "Lista de Reservaciones",
+                title: "Lista de usuarios",
                 data: usuarioList,
                 onClose: () => setShowUsuarioModal(false),
                 currentPage,
@@ -153,6 +205,14 @@ const AdminPage: React.FC = () => {
                 response={responseModal.response}
                 title={responseModal.title}
             />
+            {showAttendModal && attendForm && (
+                <AttendModal
+                    isOpen={showAttendModal}
+                    onClose={() => setShowAttendModal(false)}
+                    reservation={attendForm}
+                    onSubmit={handleAttendSubmit}
+                />
+            )}
         </div>
     );
 };
